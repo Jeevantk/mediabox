@@ -11,7 +11,7 @@
         <mat-icon>search</mat-icon>
         <mat-form-field class="w-75">
             <mat-label>Search audio files</mat-label>
-            <input matInput type="text" [(ngModel)]="searchValue" placeholder="Piano music" (keyup.enter)="getSearchResults()">
+            <input matInput type="text" [(ngModel)]="searchValue" placeholder="Piano music" (keyup)="onSearch()">
             <button *ngIf="searchValue" matSuffix mat-icon-button aria-label="Clear" (click)="onClearSearch()">
                 <mat-icon>close</mat-icon>
             </button>
@@ -61,7 +61,7 @@
             <ng-container matColumnDef="expandedDetail">
                 <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplayWithExpand.length">
                     <div class="example-element-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-                <h6>Content:</h6>
+                        <h6>Content:</h6>
                         <p>{{element.textData}}</p>
                 </div>
                 </td>

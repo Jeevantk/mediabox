@@ -6,6 +6,7 @@ import { AudioService } from '../audio.service';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DateTime } from 'luxon';
+import * as _ from "lodash";
 
 export interface UserAudio {
   userId: string;
@@ -91,6 +92,8 @@ export class AudioListComponent implements OnInit, OnDestroy {
       this.dataSource = await this.audioService.searchAudioFiles(this.searchValue);
     }
   }
+
+  onSearch = _.debounce(this.getSearchResults, 500)
 
   onClearSearch() {
     this.searchValue = '';
