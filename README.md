@@ -5,11 +5,15 @@ To try out the project you can visit https://d17bv7qwefaqwx.cloudfront.net/ and 
 You can also login using my user credentials in order to see and interact with some preseeded data
 
 email: jeevan.thomaskoshy@gmail.com
+
 password: Temp1234
+
+
 
 Alternate Account:
 
 email: jeevan@hiretheauthor.com
+
 password: password
 
 The project is Organised into Three folders , infra, frontend and backend
