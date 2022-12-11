@@ -14,6 +14,6 @@ import { AmplifyAuthenticatorModule } from '@aws-amplify/ui-angular';
   ],
   exports: [
     AuthenticatorComponent
-  ]
+  ],
 })
 export class AuthModule { }

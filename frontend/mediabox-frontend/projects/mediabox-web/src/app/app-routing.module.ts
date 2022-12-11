@@ -3,18 +3,19 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
-    path: '',
-    pathMatch: 'full',
-    redirectTo: 'home'
+    path: 'files',
+    loadChildren: () =>
+      import('./features/audio/audio.module').then((m) => m.AudioModule),
   },
   {
-    path: 'home',
+    path: '',
+    pathMatch: 'full',
     loadChildren: () =>
-      import('./features/home/home.module').then((m) => m.HomeModule),
+    import('./features/home/home.module').then((m) => m.HomeModule),
   },
   {
     path: '**',
-    redirectTo: 'home'
+    redirectTo: ''
   }
 ];
 

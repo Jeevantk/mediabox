@@ -7,6 +7,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
+import { MatButtonModule } from '@angular/material/button';
 
 Auth.configure(awsconfig);
 
@@ -18,9 +20,10 @@ Auth.configure(awsconfig);
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-
+    HttpClientModule,
     RouterModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatButtonModule
   ],
   exports: [
     MainLayoutComponent

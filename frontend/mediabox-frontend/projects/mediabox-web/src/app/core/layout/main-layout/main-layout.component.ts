@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Auth } from 'aws-amplify';
+import { AuthService } from '../../../features/auth/auth.service';
 
 @Component({
   selector: 'app-main-layout',
@@ -7,9 +9,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MainLayoutComponent implements OnInit {
 
-  constructor() { }
+  showSignoutBtn = false;
 
-  ngOnInit(): void {
+  constructor(private authService: AuthService) { }
+
+  async ngOnInit(): Promise<void> {
+    const authDetails = await this.authService.checkAuth();
+    this.showSignoutBtn = authDetails.isAuth;
+  }
+
+  signOut() {
+    Auth.signOut();
   }
 
 }

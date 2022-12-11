@@ -1,6 +1,7 @@
 <mat-toolbar color="primary">
     Media box
     <span class="spacer"></span>
+    <button mat-button *ngIf="showSignoutBtn" (click)="signOut()">Sign out</button>
 </mat-toolbar>
 <main>
     <router-outlet></router-outlet>
