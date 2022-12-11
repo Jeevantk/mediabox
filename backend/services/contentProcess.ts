@@ -1,4 +1,5 @@
 import fetch from "node-fetch";
+import sqs from "../libs/sqs-lib";
 
 const ASSEMBLY_URL = "https://api.assemblyai.com/v2/transcript";
 
@@ -14,7 +15,7 @@ export default {
         "content-type": "application/json",
       },
       body: JSON.stringify({
-        audio_url: event.audio_url,
+        audio_url: event.url,
         webhook_url: WEBHOOK_URL,
       }),
       method: "POST",
@@ -32,8 +33,20 @@ export default {
       method: "GET",
     };
     const data = await fetch(ASSEMBLY_URL + `/${transcriptId}`, getParams);
-    const body = await data.json()
-    console.log('transcript details is ',body);
-    return body
+    const body = await data.json();
+    console.log("transcript details is ", body);
+    return body;
+  },
+  addItemToQueue: async (data) => {
+    let sqsItemParams = {
+      MessageBody: JSON.stringify({
+        url: data.url,
+        userId: data.userId,
+        createdAt: data.createdAt,
+        fileId: data.fileId,
+      }),
+      QueueUrl: process.env.processQueueUrl,
+    };
+    await sqs.sendMessage(sqsItemParams);
   },
 };

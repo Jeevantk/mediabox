@@ -6,6 +6,7 @@ import {
 import userService from "./services/users";
 import fileService from "./services/files";
 import contentProcess from "./services/contentProcess";
+import searchService from "./services/search";
 import { failure, success } from "./libs/response-lib";
 
 export async function createAccount(
@@ -39,11 +40,42 @@ export async function sendFilesToAssembly(event: SQSEvent) {
 export async function assemblyWebhook(event: APIGatewayProxyEvent) {
   console.log("assembly webhook event", event);
   const eventData = JSON.parse(event.body!);
-  // TODO -> fetch transcript details from
   const transcriptData = await contentProcess.getTranscriptDetails(
     eventData.transcript_id
   );
   console.log("Transcript data is ", transcriptData);
+  const fileId = await fileService.updateTranscriptionDetails(
+    transcriptData,
+    eventData.transcript_id
+  );
+  await searchService.addDataToIndex(
+    transcriptData,
+    eventData.transcript_id,
+    fileId
+  );
+
   return success({ message: "OK" });
-  //add data to dynamodb and algolia
+}
+
+export async function getUserFiles(event: APIGatewayProxyEvent) {
+  const userId = event.requestContext.authorizer!.claims["custom:userId"];
+  try {
+    const userFiles = await fileService.getUserFiles(userId);
+    return success(userFiles);
+  } catch (err) {
+    return failure(err);
+  }
+}
+
+export async function addUserFiles(event: APIGatewayProxyEvent) {
+  const userId = event.requestContext.authorizer!.claims["custom:userId"];
+  const requestBody = JSON.parse(event.body!);
+  try {
+    const fileDetails = await fileService.addUserFiles(userId, requestBody);
+    // TO DO add event to SQS for downstream processing
+    await contentProcess.addItemToQueue(fileDetails);
+    return success(fileDetails);
+  } catch (err) {
+    return failure(err);
+  }
 }

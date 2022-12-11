@@ -17,6 +17,7 @@ provider:
   cognitoArn-dev: arn:aws:cognito-idp:us-east-1:377279994411:userpool/us-east-1_Z0IW4U3ph
   processQueue-dev: arn:aws:sqs:us-east-1:377279994411:dev-media-queue
   environment:
+    awsRegion: ${self:provider.region}
     stage: ${self:provider.stage}
     profileTable: ${self:provider.stage}-profile
     filesTable: ${self:provider.stage}-files
@@ -44,6 +45,11 @@ provider:
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
       Resource: arn:aws:dynamodb:${self:provider.region}:${self:custom.awsAccountId}:table/${self:provider.environment.filesTable}
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+      Resource: arn:aws:dynamodb:${self:provider.region}:${self:custom.awsAccountId}:table/${self:provider.environment.filesTable}/index/*
 
     - Effect: Allow
       Action:
@@ -87,6 +93,24 @@ functions:
           path: "/assemblyai/webhook"
           method: post
           cors: true
+  getUserFiles:
+    handler: index.getUserFiles
+    events:
+      - http:
+          path: "/files"
+          method: get
+          cors: true
+          authorizer:
+            arn: ${self:provider.cognitoArn-${self:provider.stage}}
+  addUserFiles:
+    handler: index.addUserFiles
+    events:
+      - http:
+          path: "/files"
+          method: post
+          cors: true
+          authorizer:
+            arn: ${self:provider.cognitoArn-${self:provider.stage}}
 
 plugins:
   - serverless-esbuild
