@@ -139,7 +139,7 @@ export class AudioListComponent implements OnInit, OnDestroy {
   }
 
   getFormattedDateTime(dateString: string) {
-    return DateTime.fromISO(dateString).toFormat('dd-mm-yyyy hh:mm');
+    return DateTime.fromISO(dateString).toFormat('dd-MM-yyyy hh:mm');
   }
 
   async getSearchResults() {
