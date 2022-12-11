@@ -5,12 +5,12 @@ import dynamoDb from "../libs/dynamodb-lib";
 const S3 = new AWS.S3();
 
 export default {
-  getPreSignedUrl: async () => {
+  getPreSignedUrl: async (contentType: string) => {
     const params = {
       Bucket: process.env.bucketName,
       Key: uuid.v4(),
       Expires: 30,
-      ContentType: "audio/mpeg",
+      ContentType: contentType,
     };
     const url = await S3.getSignedUrl("putObject", params);
     console.log("params is", params);
@@ -63,10 +63,8 @@ export default {
         userId: fileDetails.userId,
         createdAt: fileDetails.createdAt,
       },
-      UpdateExpression:
-        "set words = :words , processingStatus = :stat , textData = :text",
+      UpdateExpression: "set processingStatus = :stat , textData = :text",
       ExpressionAttributeValues: {
-        ":words": transcriptData.words,
         ":stat": "COMPLETED",
         ":text": transcriptData.text,
       },

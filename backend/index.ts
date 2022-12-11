@@ -22,8 +22,9 @@ export async function createAccount(
 
 export async function getPreSignedUrl(event: APIGatewayProxyEvent) {
   try {
-    console.log("Event is ", event);
-    const url = await fileService.getPreSignedUrl();
+    console.log("Event headers is  ", event.headers);
+    const contentType = event.headers["content-type"] || "audio/mpeg";
+    const url = await fileService.getPreSignedUrl(contentType);
     return success({ signedUrl: url });
   } catch (err) {
     return failure(err);
