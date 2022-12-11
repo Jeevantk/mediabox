@@ -22,6 +22,7 @@ export async function createAccount(
 
 export async function getPreSignedUrl(event: APIGatewayProxyEvent) {
   try {
+    console.log("Event is ", event);
     const url = await fileService.getPreSignedUrl();
     return success({ signedUrl: url });
   } catch (err) {
@@ -45,7 +46,7 @@ export async function assemblyWebhook(event: APIGatewayProxyEvent) {
       eventData.transcript_id
     );
     console.log("Transcript data is ", transcriptData);
-    const fileId = await fileService.updateTranscriptionDetails(
+    const fileDetails = await fileService.updateTranscriptionDetails(
       transcriptData,
       eventData.transcript_id
     );
@@ -53,7 +54,7 @@ export async function assemblyWebhook(event: APIGatewayProxyEvent) {
     await searchService.addDataToIndex(
       transcriptData,
       eventData.transcript_id,
-      fileId
+      fileDetails
     );
     return success({ message: "OK" });
   } catch (err) {
@@ -75,12 +76,16 @@ export async function getUserFiles(event: APIGatewayProxyEvent) {
 export async function addUserFiles(event: APIGatewayProxyEvent) {
   const userId = event.requestContext.authorizer!.claims["custom:userId"];
   const requestBody = JSON.parse(event.body!);
+  console.log("Request body is ", requestBody);
+  console.log("User id is ", userId);
   try {
     const fileDetails = await fileService.addUserFiles(userId, requestBody);
+    console.log("File details is ", fileDetails);
     // TO DO add event to SQS for downstream processing
     await contentProcess.addItemToQueue(fileDetails);
     return success(fileDetails);
   } catch (err) {
+    console.log("Error is ", err);
     return failure(err);
   }
 }

@@ -6,11 +6,14 @@ const S3 = new AWS.S3();
 
 export default {
   getPreSignedUrl: async () => {
-    const url = await S3.getSignedUrl("putObject", {
+    const params = {
       Bucket: process.env.bucketName,
       Key: uuid.v4(),
       Expires: 30,
-    });
+      ContentType: "audio/mpeg",
+    };
+    const url = await S3.getSignedUrl("putObject", params);
+    console.log("params is", params);
     return url;
   },
   getUserFiles: async (userId: string) => {
@@ -21,6 +24,7 @@ export default {
       ExpressionAttributeValues: {
         ":userId": userId,
       },
+      ScanIndexForward: false,
     };
     let userFiles = await dynamoDb.query(getUserFilesParams);
     return userFiles.Items;
@@ -66,21 +70,24 @@ export default {
         ":stat": "COMPLETED",
         ":text": transcriptData.text,
       },
+      ReturnValues: "ALL_NEW",
     };
-    await dynamoDb.update(updateFilesParams);
-    return fileDetails.fileId;
+    const updatedFileDetails = await dynamoDb.update(updateFilesParams);
+    return updatedFileDetails.Attributes;
   },
   addUserFiles: async (userId: string, data) => {
     const fileItem = {
       userId,
-      createdOn: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
       fileId: data.fileId,
       url: data.url,
+      processingStatus: "PENDING",
     };
     const putParams = {
       TableName: process.env.filesTable,
       Item: fileItem,
     };
     await dynamoDb.put(putParams);
+    return fileItem;
   },
 };

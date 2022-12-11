@@ -16,12 +16,16 @@ provider:
   region: ${opt:region,'us-east-1'}
   cognitoArn-dev: arn:aws:cognito-idp:us-east-1:377279994411:userpool/us-east-1_Z0IW4U3ph
   processQueue-dev: arn:aws:sqs:us-east-1:377279994411:dev-media-queue
+  poolId-dev: us-east-1_Z0IW4U3ph
+
   environment:
     awsRegion: ${self:provider.region}
     stage: ${self:provider.stage}
     profileTable: ${self:provider.stage}-profile
     filesTable: ${self:provider.stage}-files
     processQueueUrl: https://sqs.${self:provider.region}.amazonaws.com/${self:custom.awsAccountId}/${self:custom.stage}-media-queue
+    cognitoPoolId: ${self:provider.poolId-${self:provider.stage}}
+    bucketName: ${self:provider.stage}-mediabox-files
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
   apiGateway:
     minimumCompressionSize: 1024 # Enable gzip compression for responses > 1 KB

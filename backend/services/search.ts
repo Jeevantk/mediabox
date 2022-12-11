@@ -7,11 +7,21 @@ const client = algoliasearch(
 const algIndex = client.initIndex(process.env.ALGOLIA_INDEX_NAME);
 
 export default {
-  addDataToIndex: async (transcriptData, transcriptionId, fileId) => {
+  addDataToIndex: async (
+    transcriptData,
+    transcriptionId: string,
+    fileDetails
+  ) => {
     const record = {
-      objectID: fileId,
-      text: transcriptData.text,
+      objectID: fileDetails.fileId,
       transcriptionId: transcriptionId,
+      userId: fileDetails.userId,
+      createdAt: fileDetails.createdAt,
+      fileId: fileDetails.fileId,
+      processingStatus: fileDetails.processingStatus,
+      textData: transcriptData.text,
+      url: fileDetails.url,
+      _tags: [fileDetails.userId],
     };
     await algIndex.saveObject(record);
   },
