@@ -126,7 +126,7 @@ export class AudioListComponent implements OnInit, OnDestroy {
   }
 
   async getErrorMessages(file: File) {
-    if (!file.type.startsWith('audio/') || !file.type.startsWith('video/')) {
+    if (!(file.type.startsWith('audio/') || file.type.startsWith('video/'))) {
       return 'Invalid file type, please enter a valid audio file';
     }
     const duration = await this.computeAudioDuration(file);
