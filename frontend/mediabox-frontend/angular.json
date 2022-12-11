@@ -43,7 +43,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumError": "2mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -55,6 +55,10 @@
                 {
                   "replace": "projects/mediabox-web/src/environments/environment.ts",
                   "with": "projects/mediabox-web/src/environments/environment.prod.ts"
+                },
+                {
+                  "replace": "projects/mediabox-web/src/aws-exports.ts",
+                  "with": "projects/mediabox-web/src/aws-exports.prod.ts"
                 }
               ],
               "outputHashing": "all"

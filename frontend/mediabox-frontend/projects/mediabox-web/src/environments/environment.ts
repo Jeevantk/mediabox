@@ -4,13 +4,9 @@
 
 export const environment = {
   production: false,
-  cookieStorageDomainParam: {
-    domain: 'localhost',
-  },
   backendUrl: 'https://ra0r82no96.execute-api.us-east-1.amazonaws.com/dev/',
-  loginUrl: 'http://localhost:4200',
   algoliaAppId: '1W3CBUZPA6',
-  algoliaApiKey: 'fe4cde3753968bfbffd53d210c4bfa65'
+  algoliaApiKey: 'fe4cde3753968bfbffd53d210c4bfa65',
 };
 
 /*
