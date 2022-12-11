@@ -24,7 +24,9 @@ Go to each folder where there is a serverless.yml file specified, and type ```se
 The frontend for this project is built using angular and in order to run the same locally, you can do to 
 
 ```cd frontend/mediabox-frontend/```
+
 ```npm i```
+
 ```ng serve```
 
 The application will start on localhost:4200
@@ -35,6 +37,7 @@ The application will start on localhost:4200
 The backend is completely serverless on AWS and is deployed using the Serverless framework. In order to deploy, you need to modify an AWS profile to one that you own. After the same, you can do 
 
 ```cd backend```
+
 ```serverless deploy```
 
 
