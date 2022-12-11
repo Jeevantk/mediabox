@@ -63,6 +63,7 @@ export class AudioListComponent implements OnInit, OnDestroy {
 
     this.fileUploadedSub = this.audioService.getFileUploadedListener().subscribe(response => {
       this._snackBar.open("File uploaded successfully", '', {
+        verticalPosition: 'top',
         duration: 3000
       });
       this.fetchUserAudioFiles();
@@ -71,13 +72,53 @@ export class AudioListComponent implements OnInit, OnDestroy {
     this.fetchUserAudioFiles();
   }
 
-  onAudioPicked(event: Event) {
+  computeAudioDuration(file: File): Promise<number> {
+    return new Promise((resolve) => {
+      var objectURL = URL.createObjectURL(file);
+      var mySound = new Audio(objectURL);
+      mySound.addEventListener(
+        "canplaythrough",
+        () => {
+          URL.revokeObjectURL(objectURL);
+          resolve(mySound.duration);
+        },
+        false,
+      );
+    });  
+  }
+
+  async onAudioPicked(event: Event) {
     const file = (event?.target as HTMLInputElement).files![0];
     this.form.patchValue({ image: file });
-    this._snackBar.open("Uploading file...", '', {
-      duration: 3000
-    })
-    this.audioService.postAudioFile(file);
+    
+    const errorMessage = await this.getErrorMessages(file);
+
+    if(errorMessage.length === 0) {
+      this._snackBar.open("Uploading file...", '', {
+        verticalPosition: 'top',
+        duration: 3000
+      })
+      // this.audioService.postAudioFile(file);
+    } else {
+      this._snackBar.open(errorMessage, '', {
+        verticalPosition: 'top',
+        duration: 5000
+      })
+    }
+  }
+
+  async getErrorMessages(file: File){
+    if(!file.type.startsWith("audio/")){
+      return "Invalid file type, please enter a valid audio file";
+    }
+    const duration = (await this.computeAudioDuration(file));
+
+    console.log(duration)
+    if(duration > 3600) {
+      return "Please upload audio files with duration less than 1 hour."
+    }
+
+    return '';
   }
 
   getFormattedDateTime(dateString: string) {

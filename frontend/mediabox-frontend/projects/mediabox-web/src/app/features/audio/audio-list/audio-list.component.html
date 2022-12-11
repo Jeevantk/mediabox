@@ -3,7 +3,7 @@
         <button mat-raised-button (click)="filePicker.click()" class="demo-button" color="primary">
             <mat-icon class="mr-2">add</mat-icon>Upload Audio
          </button>
-         <input type="file" #filePicker (change) = "onAudioPicked($event)" />
+         <input type="file" accept="audio/*" #filePicker (change) = "onAudioPicked($event)" />
 
     </div>
     
