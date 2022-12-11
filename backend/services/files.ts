@@ -80,6 +80,7 @@ export default {
       fileId: data.fileId,
       url: data.url,
       processingStatus: "PENDING",
+      fileName: data.fileName || "",
     };
     const putParams = {
       TableName: process.env.filesTable,

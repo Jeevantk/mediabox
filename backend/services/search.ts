@@ -21,6 +21,7 @@ export default {
       processingStatus: fileDetails.processingStatus,
       textData: transcriptData.text,
       url: fileDetails.url,
+      fileName: fileDetails.fileName,
       _tags: [fileDetails.userId],
     };
     await algIndex.saveObject(record);
