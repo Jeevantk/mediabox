@@ -6,37 +6,14 @@ import Auth, {
   CognitoUser,
 } from '@aws-amplify/auth';
 import { Router } from '@angular/router';
-import { CookieService } from 'ngx-cookie-service';
 import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   constructor(
     private router: Router,
-    private cookieService: CookieService,
     private zone: NgZone
   ) {
-    Hub.listen('auth', ({ payload: { event, data, message } }) => {
-      if (event === 'signIn') {
-        console.log("maria here")
-        this.checkAuth();
-        if (this.router.url !== '/auth/login') {
-          this.zone.run(() => {
-            this.router.navigate(['auth/login']);
-          });
-        }
-        this.onHeaderRefresh();
-      } else if (event === 'signOut' || event === 'oAuthSignOut') {
-        // to do- check if OOTB amplify implementation is there
-        // localStorage.removeItem("amplify-redirected-from-hosted-ui");
-        // document.cookie = "amplify-redirected-from-hosted-ui" + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-        this.removeAuth();
-        if (event === 'signOut') {
-          this.router.navigate(['']);
-        }
-        this.onHeaderRefresh();
-      }
-    });
   }
   public static SIGN_IN = 'signIn';
   public static SIGN_OUT = 'signOut';
@@ -150,19 +127,6 @@ export class AuthService {
       isAuth: this.isAuthenticated,
       idToken: this.token,
     });
-  }
-
-  routeToSignInPage() {
-    const expiresIn = new Date();
-    expiresIn.setHours(expiresIn.getHours() + 1);
-    this.cookieService.set('signInRedirectUrl', this.router.url, {
-      ...environment.cookieStorageDomainParam,
-      expires: expiresIn,
-      path: '/',
-    });
-    // localStorage.setItem('signInRedirectUrl', this.router.url);
-    window.location.href = environment.loginUrl;
-    // this.router.navigate(['signin']);
   }
 
   getAuthStatusListener() {

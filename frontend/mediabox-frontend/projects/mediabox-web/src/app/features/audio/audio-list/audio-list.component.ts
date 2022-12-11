@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { AudioService } from '../audio.service';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { DateTime } from 'luxon';
 
 export interface UserAudio {
   userId: string;
@@ -55,6 +56,7 @@ export class AudioListComponent implements OnInit, OnDestroy {
     });
 
     this.audioFilesFetchedSub = this.audioService.getAudioFilesFetchedListener().subscribe(response => {
+      this.isLoading = false;
       this.dataSource = response;
     })
 
@@ -62,10 +64,10 @@ export class AudioListComponent implements OnInit, OnDestroy {
       this._snackBar.open("File uploaded successfully", '', {
         duration: 3000
       });
-      this.audioService.getAudioFiles();
+      this.fetchUserAudioFiles();
     });
 
-    this.audioService.getAudioFiles();
+    this.fetchUserAudioFiles();
   }
 
   onAudioPicked(event: Event) {
@@ -78,8 +80,26 @@ export class AudioListComponent implements OnInit, OnDestroy {
   }
 
   getFormattedDateTime(dateString: string) {
-    const date = new Date(dateString);
-    return date.toDateString() + " " + date.toTimeString()
+    return DateTime.fromISO(dateString).toFormat('dd-mm-yyyy hh:mm')
+  }
+
+  async getSearchResults() {
+    if(this.searchValue === '') {
+      this.fetchUserAudioFiles();
+    }
+    else {
+      this.dataSource = await this.audioService.searchAudioFiles(this.searchValue);
+    }
+  }
+
+  onClearSearch() {
+    this.searchValue = '';
+    this.fetchUserAudioFiles();
+  }  
+
+  fetchUserAudioFiles() {
+    this.isLoading = true;
+    this.audioService.getAudioFiles();
   }
 
 }

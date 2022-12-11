@@ -1,6 +1,6 @@
 <div class="p-4">
     <div class="d-flex align-items-center">
-        <button mat-raised-button (click)="filePicker.click()" class="demo-button">
+        <button mat-raised-button (click)="filePicker.click()" class="demo-button" color="primary">
             <mat-icon class="mr-2">add</mat-icon>Upload Audio
          </button>
          <input type="file" #filePicker (change) = "onAudioPicked($event)" />
@@ -11,14 +11,14 @@
         <mat-icon>search</mat-icon>
         <mat-form-field class="w-75">
             <mat-label>Search audio files</mat-label>
-            <input matInput type="text" [(ngModel)]="searchValue" placeholder="Piano music">
-            <button *ngIf="searchValue" matSuffix mat-icon-button aria-label="Clear" (click)="searchValue=''">
+            <input matInput type="text" [(ngModel)]="searchValue" placeholder="Piano music" (keyup.enter)="getSearchResults()">
+            <button *ngIf="searchValue" matSuffix mat-icon-button aria-label="Clear" (click)="onClearSearch()">
                 <mat-icon>close</mat-icon>
             </button>
         </mat-form-field>
     </div>
-    
-        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 demo-table" 
+    <mat-spinner *ngIf="isLoading" class="custom-spinner mx-auto my-3" diameter="40"></mat-spinner>
+    <table *ngIf="!isLoading" mat-table [dataSource]="dataSource" class="mat-elevation-z8 demo-table" 
             multiTemplateDataRows class="w-100">
             <ng-container matColumnDef="fileId">
                 <th mat-header-cell *matHeaderCellDef>File</th>
@@ -74,6 +74,6 @@
                 (click)="expandedElement = expandedElement === element ? null : element">
             </tr>
             <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>      
-      </table>
+    </table>
 </div>
 

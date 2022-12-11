@@ -18,8 +18,9 @@ export class MainLayoutComponent implements OnInit {
     this.showSignoutBtn = authDetails.isAuth;
   }
 
-  signOut() {
-    Auth.signOut();
+  async signOut() {
+    await Auth.signOut();
+    this.showSignoutBtn = false;
   }
 
 }
