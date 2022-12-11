@@ -36,7 +36,9 @@ tr.example-element-row:not(.example-expanded-row):active {
 }
 
 .example-element-detail {
-  overflow: hidden;
+  overflow-y: scroll;
+  text-overflow: ellipsis;
+  max-height: 200px;
 }
 
 :host ::ng-deep .custom-spinner circle {

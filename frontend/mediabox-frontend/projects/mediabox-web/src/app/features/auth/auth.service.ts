@@ -1,12 +1,8 @@
 import { Injectable, NgZone } from '@angular/core';
-import { Subject, Observable } from 'rxjs';
-import { Hub, ICredentials } from '@aws-amplify/core';
-import Auth, {
-  CognitoHostedUIIdentityProvider,
-  CognitoUser,
-} from '@aws-amplify/auth';
+import { Subject } from 'rxjs';
+import Auth from '@aws-amplify/auth';
+import { Hub } from 'aws-amplify';
 import { Router } from '@angular/router';
-import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -14,19 +10,22 @@ export class AuthService {
     private router: Router,
     private zone: NgZone
   ) {
+    Hub.listen('auth', (data: { payload: { event: any; }; }) => {
+      switch (data.payload.event) {
+        case 'signIn':
+          this.zone.run(() => {
+            this.router.navigate(['files'])
+          });
+          break;
+        case 'signOut':
+          this.removeAuth();
+          this.router.navigate(['']);
+          break;
+      }
+    });
   }
-  public static SIGN_IN = 'signIn';
-  public static SIGN_OUT = 'signOut';
-  public static GOOGLE = CognitoHostedUIIdentityProvider.Google;
-  private headerRefresh = new Subject<boolean>();
 
   public loggedIn = false;
-
-  private _authState: Subject<CognitoUser | any> = new Subject<
-    CognitoUser | any
-  >();
-  authState: Observable<CognitoUser | any> = this._authState.asObservable();
-
   private token: string | null = '';
   private authStatusListener = new Subject<{
     session: any;
@@ -36,20 +35,6 @@ export class AuthService {
   private isAuthenticated = false;
   private sessionDetails: any;
   private userName: string | null = '';
-  onHeaderRefresh() {
-    this.headerRefresh.next(true);
-  }
-  getHeaderRefreshListener() {
-    return this.headerRefresh.asObservable();
-  }
-
-  socialSignIn(
-    provider: CognitoHostedUIIdentityProvider
-  ): Promise<ICredentials> {
-    return Auth.federatedSignIn({
-      provider,
-    });
-  }
 
   getUserName() {
     return this.sessionDetails.signInUserSession.idToken.payload[

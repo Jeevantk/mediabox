@@ -1,11 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AuthGuard } from './features/auth/auth-guard';
 
 const routes: Routes = [
   {
     path: 'files',
     loadChildren: () =>
       import('./features/audio/audio.module').then((m) => m.AudioModule),
+      canActivate:[AuthGuard]
   },
   {
     path: '',
@@ -21,6 +23,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
+  providers: [AuthGuard]
 })
 export class AppRoutingModule { }
