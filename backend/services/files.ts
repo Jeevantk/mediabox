@@ -32,10 +32,10 @@ export default {
         userId: data.userId,
         createdAt: data.createdAt,
       },
-      UpdateExpression: "set transcriptionId = :tid , status = :status",
+      UpdateExpression: "set transcriptionId = :tid , processingStatus = :stat",
       ExpressionAttributeValues: {
         ":tid": transcriptionId,
-        ":status": "PENDING",
+        ":stat": "PENDING",
       },
     };
     await dynamoDb.update(updateFilesParams);
@@ -59,10 +59,11 @@ export default {
         userId: fileDetails.userId,
         createdAt: fileDetails.createdAt,
       },
-      UpdateExpression: "set words = :words , status = :status , text = :text",
+      UpdateExpression:
+        "set words = :words , processingStatus = :stat , textData = :text",
       ExpressionAttributeValues: {
-        ":tid": transcriptData.words,
-        ":status": "COMPLETED",
+        ":words": transcriptData.words,
+        ":stat": "COMPLETED",
         ":text": transcriptData.text,
       },
     };

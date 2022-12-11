@@ -1,6 +1,3 @@
-import * as uuid from "uuid";
-import AWS from "../libs/aws-sdk";
-import dynamoDb from "../libs/dynamodb-lib";
 import algoliasearch from "algoliasearch";
 
 const client = algoliasearch(

@@ -39,22 +39,27 @@ export async function sendFilesToAssembly(event: SQSEvent) {
 
 export async function assemblyWebhook(event: APIGatewayProxyEvent) {
   console.log("assembly webhook event", event);
-  const eventData = JSON.parse(event.body!);
-  const transcriptData = await contentProcess.getTranscriptDetails(
-    eventData.transcript_id
-  );
-  console.log("Transcript data is ", transcriptData);
-  const fileId = await fileService.updateTranscriptionDetails(
-    transcriptData,
-    eventData.transcript_id
-  );
-  await searchService.addDataToIndex(
-    transcriptData,
-    eventData.transcript_id,
-    fileId
-  );
+  try {
+    const eventData = JSON.parse(event.body!);
+    const transcriptData = await contentProcess.getTranscriptDetails(
+      eventData.transcript_id
+    );
+    console.log("Transcript data is ", transcriptData);
+    const fileId = await fileService.updateTranscriptionDetails(
+      transcriptData,
+      eventData.transcript_id
+    );
 
-  return success({ message: "OK" });
+    await searchService.addDataToIndex(
+      transcriptData,
+      eventData.transcript_id,
+      fileId
+    );
+    return success({ message: "OK" });
+  } catch (err) {
+    console.log(JSON.stringify(err));
+    return failure({ message: "Failed to process, pls retry" });
+  }
 }
 
 export async function getUserFiles(event: APIGatewayProxyEvent) {
