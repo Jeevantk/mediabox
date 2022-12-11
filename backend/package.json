@@ -1,0 +1,14 @@
+{
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.109",
+    "@types/node": "^18.11.12",
+    "esbuild": "^0.14.25",
+    "serverless-esbuild": "^1.25.0"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1272.0",
+    "node-fetch": "^3.3.0",
+    "serverless-dotenv-plugin": "^4.0.2",
+    "uuid": "^9.0.0"
+  }
+}

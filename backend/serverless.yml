@@ -1,0 +1,93 @@
+service: mediabox-backend # NOTE: update this with your service name
+frameworkVersion: "3"
+
+# Create an optimized package for our functions
+package:
+  individually: true
+
+custom:
+  stage: ${self:provider.stage}
+  awsAccountId: "377279994411"
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region,'us-east-1'}
+  cognitoArn-dev: arn:aws:cognito-idp:us-east-1:377279994411:userpool/us-east-1_Z0IW4U3ph
+  processQueue-dev: arn:aws:sqs:us-east-1:377279994411:dev-media-queue
+  environment:
+    stage: ${self:provider.stage}
+    profileTable: ${self:provider.stage}-profile
+    filesTable: ${self:provider.stage}-files
+    processQueueUrl: https://sqs.${self:provider.region}.amazonaws.com/${self:custom.awsAccountId}/${self:custom.stage}-media-queue
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+  apiGateway:
+    minimumCompressionSize: 1024 # Enable gzip compression for responses > 1 KB
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: arn:aws:dynamodb:${self:provider.region}:${self:custom.awsAccountId}:table/${self:provider.environment.profileTable}
+
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: arn:aws:dynamodb:${self:provider.region}:${self:custom.awsAccountId}:table/${self:provider.environment.filesTable}
+
+    - Effect: Allow
+      Action:
+        - cognito-idp:AdminUpdateUserAttributes
+        - cognito-idp:ListUsers
+        - cognito-idp:AdminDisableUser
+        - cognito-idp:AdminEnableUser
+      Resource: ${self:provider.cognitoArn-${self:provider.stage}}
+    - Effect: "Allow"
+      Action:
+        - "s3:*"
+      Resource: arn:aws:s3:::${self:provider.stage}-mediabox-files/*
+    - Effect: Allow
+      Action:
+        - "sqs:*"
+      Resource: "*"
+
+functions:
+  createAccount:
+    handler: index.createAccount
+    memorySize: 256
+  getPresignedUrl:
+    handler: index.getPreSignedUrl
+    events:
+      - http:
+          path: "/getPresignedUrl"
+          method: get
+          cors: true
+          authorizer:
+            arn: ${self:provider.cognitoArn-${self:provider.stage}}
+  sendFilesToAssembly:
+    handler: index.sendFilesToAssembly
+    events:
+      - sqs:
+          arn: ${self:provider.processQueue-${self:provider.stage}}
+          batchSize: 1
+  assemblyWebhook:
+    handler: index.assemblyWebhook
+    events:
+      - http:
+          path: "/assemblyai/webhook"
+          method: post
+          cors: true
+
+plugins:
+  - serverless-esbuild
+  - serverless-dotenv-plugin

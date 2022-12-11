@@ -1,0 +1,19 @@
+service: mediabox-queue-media
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
+  processQueue: ${self:custom.stage}-media-queue
+
+provider:
+  name: aws
+  stage: dev
+  region: ${opt:region,'us-east-1'}
+  profile: ${opt:profile, 'prodhta'}
+
+resources:
+  Resources:
+    prodhta:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: ${self:custom.processQueue}
+        ReceiveMessageWaitTimeSeconds: 10
