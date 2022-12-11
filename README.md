@@ -5,12 +5,21 @@ To try out the project you can visit https://d17bv7qwefaqwx.cloudfront.net/ and 
 You can also login using my user credentials in order to see and interact with some preseeded data
 
 email: jeevan.thomaskoshy@gmail.com
+
 password: Temp1234
+
+
+
+Alternate Account:
+
+email: jeevan@hiretheauthor.com
+
+password: password
 
 The project is Organised into Three folders , infra, frontend and backend
 
 # infra
-About 80-90% of the AWS infrasture for this project is deployed via Infrastucture as Code. I create a few items like cloudfront cdn/ s3 website hosting manually via the console. I have used Serverless Framework for IaC in this project. 
+About 80-90% of the AWS infrasture for this project is deployed via Infrastucture as Code. I created a few items like cloudfront cdn/ s3 website hosting manually via the console. I have used Serverless Framework for IaC in this project. 
 
 In order to deploy the same to your account, you should change the aws profile mentioned in each of the serverless.yml files to a profile in an AWS account you have access to. 
 
