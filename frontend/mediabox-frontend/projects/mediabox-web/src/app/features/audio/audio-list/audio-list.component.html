@@ -3,7 +3,7 @@
         <button mat-raised-button (click)="filePicker.click()" class="demo-button" color="primary">
             <mat-icon class="mr-2">add</mat-icon>Upload Audio
          </button>
-         <input type="file" #filePicker (change) = "onAudioPicked($event)" />
+         <input type="file" accept="audio/*" #filePicker (change) = "onAudioPicked($event)" />
 
     </div>
     
@@ -22,7 +22,7 @@
             multiTemplateDataRows class="w-100">
             <ng-container matColumnDef="fileId">
                 <th mat-header-cell *matHeaderCellDef>File</th>
-                <td mat-cell *matCellDef="let element">{{element.fileId}}</td>
+                <td mat-cell *matCellDef="let element">{{element.fileName}}</td>
             </ng-container>
     
             <ng-container matColumnDef="player">
