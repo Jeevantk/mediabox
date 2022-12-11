@@ -48,7 +48,8 @@ export class AudioService {
             .subscribe((s3UploadResponse) => {
               this.http.post<any>(BACKEND_URL, {
                 fileId: signedUrl.split('?')[0].split("/").at(-1),
-                url: signedUrl.split('?')[0]
+                url: signedUrl.split('?')[0],
+                fileName: file.name
               }).subscribe(response3 => {
                 this.fileUploaded.next(response3)
               })

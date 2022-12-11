@@ -11,7 +11,8 @@ import * as _ from "lodash";
 export interface UserAudio {
   userId: string;
   createdAt: string;
-  fileId?: string;
+  fileId: string;
+  fileName: string;
   processingStatus: string;
   textData?: string;
   transcriptionId?: string;
@@ -98,7 +99,7 @@ export class AudioListComponent implements OnInit, OnDestroy {
         verticalPosition: 'top',
         duration: 3000
       })
-      // this.audioService.postAudioFile(file);
+      this.audioService.postAudioFile(file);
     } else {
       this._snackBar.open(errorMessage, '', {
         verticalPosition: 'top',
@@ -113,7 +114,6 @@ export class AudioListComponent implements OnInit, OnDestroy {
     }
     const duration = (await this.computeAudioDuration(file));
 
-    console.log(duration)
     if(duration > 3600) {
       return "Please upload audio files with duration less than 1 hour."
     }
