@@ -13,7 +13,7 @@ export class AuthenticatorComponent implements OnInit {
 
   ngOnInit(): void {
     this.formFields = {
-      'signIn': {
+      signIn: {
         username: {
           type: 'email',
           label: 'Email',

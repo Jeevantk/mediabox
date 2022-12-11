@@ -29,7 +29,6 @@ import {
             });
           } else {
             modifiedReq = request.clone();
-            console.log("modifiedReq", modifiedReq)
           }
           return next.handle(modifiedReq);
         })
